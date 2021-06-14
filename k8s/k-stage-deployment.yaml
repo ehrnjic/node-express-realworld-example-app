@@ -1,0 +1,76 @@
+apiVersion: v1
+data:
+  mongodb_uri: mongodb.default.svc.cluster.local
+  node_env: production
+kind: ConfigMap
+metadata:
+  labels:
+    app: node-api
+    env: staging
+  name: node-api-config-map
+---
+apiVersion: v1
+data:
+  secret: dGF0YXJhdGlyYQo=
+kind: Secret
+metadata:
+  labels:
+    app: node-api
+    env: staging
+  name: node-api-secret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: node-api
+    env: staging
+  name: node-api-service
+spec:
+  ports:
+  - port: 3000
+    protocol: TCP
+    targetPort: 3000
+  selector:
+    app: node-api
+    env: staging
+  type: NodePort
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: node-api
+    env: staging
+  name: node-api-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: node-api
+      env: staging
+  template:
+    metadata:
+      labels:
+        app: node-api
+        env: staging
+    spec:
+      containers:
+      - env:
+        - name: MONGODB_URI
+          valueFrom:
+            configMapKeyRef:
+              key: mongodb_uri
+              name: node-api-config-map
+        - name: NODE_ENV
+          valueFrom:
+            configMapKeyRef:
+              key: node_env
+              name: node-api-config-map
+        - name: SECRET
+          valueFrom:
+            secretKeyRef:
+              key: secret
+              name: node-api-secret
+        image: 238343536427.dkr.ecr.eu-central-1.amazonaws.com/devopstask:2
+        name: node-api

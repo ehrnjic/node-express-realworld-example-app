@@ -1,0 +1,7 @@
+commonLabels:
+  app: node-api
+resources:
+- deployment.yaml
+- configMap.yaml
+- service.yaml
+- secret.yaml

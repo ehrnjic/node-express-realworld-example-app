@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: node-api-config-map
+data:
+  mongodb_uri: mongodb.default.svc.cluster.local
+  node_env: production
